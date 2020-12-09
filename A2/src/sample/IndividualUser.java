@@ -21,6 +21,9 @@ public class IndividualUser extends Subject implements User, Observer {
 
     private String message;
 
+    private long creationTime;
+    private long lastUpdateTime;
+
     /*constructor for creating a user.
         A user has 1) an unique ID;
                    2) a list of user IDs that are following this user (followers);
@@ -33,6 +36,8 @@ public class IndividualUser extends Subject implements User, Observer {
         following = FXCollections.observableArrayList();
         newsFeed = FXCollections.observableArrayList();
         follwingSubjectToId = new HashMap<>();
+        creationTime = System.currentTimeMillis();
+        lastUpdateTime = creationTime;
     }
 
     public ObservableList<String> getNewsFeed() {
@@ -60,6 +65,7 @@ public class IndividualUser extends Subject implements User, Observer {
     {
         this.message = message;
         newsFeed.add("- Me: " + message);
+        lastUpdateTime = System.currentTimeMillis();
         notifyObservers();
     }
 
@@ -75,6 +81,20 @@ public class IndividualUser extends Subject implements User, Observer {
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    public long getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
+    @Override
+    public void setLastUpdateTime(long time) {
+        lastUpdateTime = time;
     }
 
     public ObservableList<Observer> getFollower() {
@@ -110,7 +130,7 @@ public class IndividualUser extends Subject implements User, Observer {
         if(subject instanceof IndividualUser)
         {
             String newMessage = ((IndividualUser) subject).message;
-
+            lastUpdateTime = System.currentTimeMillis();
             newsFeed.add("- "+((IndividualUser) subject).id + ": " + newMessage);
         }
     }

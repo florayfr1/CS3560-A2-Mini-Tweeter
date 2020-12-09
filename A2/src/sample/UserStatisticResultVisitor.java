@@ -82,4 +82,22 @@ public class UserStatisticResultVisitor implements UserStatisticVistor {
         }
         return result;
     }
+
+    @Override
+    public double visitValidateID(ValidateID validateID) {
+        double result = 0; // IDs are valid
+
+        ArrayList<User> userInTree = TreeViewObject.getTreeViewObject().getListOfUser();
+
+        if(!userInTree.isEmpty()) {
+            for (int i = 0; i < TreeViewObject.getTreeViewObject().getListOfUser().size(); i++) {
+                User user = userInTree.get(i);
+
+                if(user.getId().contains(" ")){
+                    result = 1; //ID is not valid
+                }
+            }
+        }
+        return result;
+    }
 }

@@ -5,4 +5,5 @@ public interface UserStatisticVistor {
     public double visitGroupTotal(GroupTotal groupTotal);
     public double visitMessageTotal(MessageTotal messageTotal);
     public double visitPositivePercentage(PositivePercentage positivePercentage);
+    public double visitValidateID(ValidateID validateID);
 }

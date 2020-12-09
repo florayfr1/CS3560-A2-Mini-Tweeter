@@ -89,6 +89,13 @@ public class AdminWindow {
         Button showPositivePercentageButton = new Button("Show Positive Percentage");
         showPositivePercentageButton.setOnAction(new ButtonClickHandler());
 
+        //create the verfication button
+        Button validateIDButton = new Button("Validate IDs");
+        validateIDButton.setOnAction(new ButtonClickHandler());
+
+        Button showLastUpdateButton = new Button("Show Last Updated ID");
+        showLastUpdateButton.setOnAction(new ButtonClickHandler());
+
         //Creating a Grid Pane
         GridPane bottomFourButtonsContainer = new GridPane();
         bottomFourButtonsContainer.setPadding(new Insets(10));
@@ -99,6 +106,8 @@ public class AdminWindow {
         bottomFourButtonsContainer.add(showGroupTotalButton, 1, 0);
         bottomFourButtonsContainer.add(showMessageTotalButton, 0, 1);
         bottomFourButtonsContainer.add(showPositivePercentageButton, 1, 1);
+        bottomFourButtonsContainer.add(validateIDButton, 0, 2);
+        bottomFourButtonsContainer.add(showLastUpdateButton, 1, 2);
 
 
         VBox rightControlsContainer = new VBox(editTreeContainer,openUserViewContainer, resultLabel, bottomFourButtonsContainer);
@@ -238,8 +247,49 @@ public class AdminWindow {
                resultLabel.setText(str);
            }
 
+           //Action for button - Show Positive Percentage
+           if(currentEvent.getText().equals("Validate IDs"))
+           {
+               ValidateID validateID = new ValidateID();
+               double validationResult = validateID.accept(result);
+               if(validationResult == 0.0) {
+                   alert = new PopUpAlert("All IDs are valid!");
+               } else
+               {
+                   alert = new PopUpAlert("Invalid ID(s) found!");
+               }
+           }
 
+           //Action for button - Show Last Updated ID
+           if(currentEvent.getText().equals("Show Last Updated ID"))
+           {
+               String resultID = findLastUpdatedID();
+               resultLabel.setText("Last Update in User: " + resultID);
+           }
+       }
 
+       private String findLastUpdatedID(){
+           String id = "";
+
+           ArrayList<User> userInTree = TreeViewObject.getTreeViewObject().getListOfUser();
+
+           if(!userInTree.isEmpty()) {
+
+               if(userInTree.size() == 1){
+                   id = "Root";
+               }
+
+               for (int i = 1; i < userInTree.size(); i++) {
+                   User user = userInTree.get(i);
+                   User previousUser = userInTree.get(i-1);
+
+                   //more time means more recent update
+                   if(user.getLastUpdateTime() > previousUser.getLastUpdateTime()){
+                       id = user.getId();
+                   }
+               }
+           }
+           return id;
        }
 
 

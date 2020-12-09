@@ -16,6 +16,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import javax.security.auth.callback.LanguageCallback;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class IndividualUserWindow implements IndividualUserWindowInterface {
 
     private TextField findUserToFollowTextField;
@@ -23,11 +27,19 @@ public class IndividualUserWindow implements IndividualUserWindowInterface {
     private PopUpAlert alert;
     private User currentUser;
     private ListView<String> listOfFollowing;
+    private Label lastUpdateLabel;
 
 
     public IndividualUserWindow(IndividualUser user, Stage primaryStage)
     {
         currentUser = user;
+
+        Label timeLabel = new Label("Member since: " + convertTimeFormat(user.getCreationTime()));
+        lastUpdateLabel = new Label("Last update since: " + convertTimeFormat(user.getLastUpdateTime()));
+
+        VBox timeContainer = new VBox(timeLabel, lastUpdateLabel);
+        timeContainer.setAlignment(Pos.CENTER_LEFT);
+        timeContainer.setPadding(new Insets(5));
 
         Label followExplainLabel = new Label("Enter the user id you want to follow");
         HBox findToFollowContainer = findToFollow();
@@ -42,7 +54,7 @@ public class IndividualUserWindow implements IndividualUserWindowInterface {
         tweetContainer.setAlignment(Pos.CENTER);
         tweetContainer.setPadding(new Insets(20));
 
-        VBox overallContainer = new VBox(followContainer, tweetContainer);
+        VBox overallContainer = new VBox(timeContainer, followContainer, tweetContainer);
         overallContainer.setAlignment(Pos.CENTER);
         overallContainer.setPadding(new Insets(10));
 
@@ -60,6 +72,14 @@ public class IndividualUserWindow implements IndividualUserWindowInterface {
         newWindow.show();
     }
 
+    private String convertTimeFormat(long time){
+        String result = "";
+        SimpleDateFormat timeStamp = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+        Date resultdate = new Date(time);
+        result += timeStamp.format(resultdate);
+        return result;
+    }
+
     public VBox tweetMessageLayout(IndividualUser user)
     {
         tweetMessageTextField = new TextField();
@@ -70,6 +90,13 @@ public class IndividualUserWindow implements IndividualUserWindowInterface {
 
         ListView<String> listOfMessage = new ListView<>();
         listOfMessage.setItems(user.getNewsFeed());
+
+        listOfMessage.getItems().addListener(new ListChangeListener<String>() {
+            @Override
+            public void onChanged(Change<? extends String> change) {
+                lastUpdateLabel.setText("Last update since: " + convertTimeFormat(currentUser.getLastUpdateTime()));
+            }
+        });
 
         return new VBox(postContainer, listOfMessage);
     }
@@ -139,6 +166,7 @@ public class IndividualUserWindow implements IndividualUserWindowInterface {
                 String message = tweetMessageTextField.getText().trim();
                 tweet(message);
                 tweetMessageTextField.clear();
+                lastUpdateLabel.setText("Last update since: " + convertTimeFormat(currentUser.getLastUpdateTime()));
             }
         }
     }

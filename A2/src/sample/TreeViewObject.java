@@ -71,11 +71,14 @@ public class TreeViewObject implements Widget {
 
     public void addChild(User child, TreeItem<String> parent)
     {
+        //record the last update time for user group
+        User parentGroupID = getUser(parent.getValue());
+        parentGroupID.setLastUpdateTime(System.currentTimeMillis());
+
         TreeItem<String> childNode = new TreeItem<>(child.getId());
         if(parent.getValue().equals("Root"))
         {
             root.getChildren().add(childNode);
-
         }else {
             parent.getChildren().add(childNode);
         }

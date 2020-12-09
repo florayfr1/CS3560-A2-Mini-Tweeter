@@ -7,4 +7,9 @@ public interface User {
 
     //This will return a user id
     public String getId();
+
+    public long getCreationTime();
+
+    public long getLastUpdateTime();
+    public void setLastUpdateTime(long time);
 }
